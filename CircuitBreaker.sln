@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircuitBreaker.Test", "CircuitBreaker.Test\CircuitBreaker.Test.csproj", "{79E43471-8244-41A2-8302-E4D602569440}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircuitBreaker", "CircuitBreaker\CircuitBreaker.csproj", "{30C71D92-554D-43EB-BAD5-71AFA48CEB20}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{79E43471-8244-41A2-8302-E4D602569440}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79E43471-8244-41A2-8302-E4D602569440}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79E43471-8244-41A2-8302-E4D602569440}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79E43471-8244-41A2-8302-E4D602569440}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30C71D92-554D-43EB-BAD5-71AFA48CEB20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30C71D92-554D-43EB-BAD5-71AFA48CEB20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30C71D92-554D-43EB-BAD5-71AFA48CEB20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30C71D92-554D-43EB-BAD5-71AFA48CEB20}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
