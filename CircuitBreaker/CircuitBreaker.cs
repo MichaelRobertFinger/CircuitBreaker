@@ -68,8 +68,25 @@ namespace CircuitBreaker
             }
             catch (Exception ex)
             {
-                //ChangeState(CircuitBreakerState.Open);
+                if (_state == CircuitBreakerState.HalfOpen)
+                {
+                    Trip();
+                }
+                else if (_failureCount < _threshold)
+                {
+                    _failureCount++;
+                }
+                else if (_failureCount >= _threshold)
+                {
+                    Trip();
+                }
+
                 throw new OperationFailedException("Operation failed", ex);
+            }
+
+            if (_state == CircuitBreakerState.HalfOpen)
+            {
+                ChangeState(CircuitBreakerState.Closed);
             }
 
             return result;
