@@ -11,26 +11,27 @@ namespace CircuitBreaker
     {
         private int _failureCount;
         private CircuitBreakerState _state;
-        private int _timeout;
         private int _threshold;
         private System.Timers.Timer _timer;
+
+        public event EventHandler StateChanged;
 
         public CircuitBreaker()
             : this(1000, 5)
         { }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="timeout">in milliseconds</param>
+        /// <param name="threshold"></param>
+        /// <param name="terminateThreshold"></param>
         public CircuitBreaker(int timeout, int threshold)
         {
             _threshold = threshold;
             _state = CircuitBreakerState.Closed;
-            _timer = new System.Timers.Timer();
+            _timer = new System.Timers.Timer(timeout);
             _timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
-        }
-
-        private void timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            _state = CircuitBreakerState.HalfOpen;
-            _timer.Stop();
         }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace CircuitBreaker
         public int Timeout
         {
             get { return (int)_timer.Interval; }
-            set { _timer.Interval = _timeout; }
+            set { _timer.Interval = value; }
         }
 
         public int Threshold
@@ -53,34 +54,22 @@ namespace CircuitBreaker
             get { return _state; }
         }
 
-        public object Execute(Delegate action, params object[] args)
+        public TResult Execute<TResult>(Func<TResult> operation)
         {
-            object result = null;
-            try
+            if (_state == CircuitBreakerState.Open)
+                throw new OpenCircuitException("Circuit breaker is currently open");
+
+            TResult result;
+
+            try 
             {
-                result = action.DynamicInvoke(args);
+                // Execute operation
+                result = operation();
             }
             catch (Exception ex)
             {
-                if (_state == CircuitBreakerState.HalfOpen)
-                {
-                    // Operation failed in a half-open state, so reopen circuit
-                    Trip();
-                }
-                else if (_failureCount < _threshold)
-                {
-                    _failureCount++;
-                }
-                else if (_failureCount >= _threshold)
-                {
-                    // Failure count has reached threshold, so trip circuit breaker
-                    Trip();
-                }
-            }
-
-            if (_state == CircuitBreakerState.HalfOpen)
-            {
-                Reset();
+                //ChangeState(CircuitBreakerState.Open);
+                throw new OperationFailedException("Operation failed", ex);
             }
 
             return result;
@@ -88,13 +77,31 @@ namespace CircuitBreaker
 
         public void Trip()
         {
-            _state = CircuitBreakerState.Open;
+            ChangeState(CircuitBreakerState.Open);
             _timer.Start();
         }
 
         public void Reset()
         {
-            _state = CircuitBreakerState.Closed;
+            ChangeState(CircuitBreakerState.Closed);
+            _timer.Stop();
+        }
+
+        protected virtual void OnStateChanged(EventArgs e)
+        {
+            if (StateChanged != null)
+                StateChanged(this, e);
+        }
+
+        private void ChangeState(CircuitBreakerState state)
+        {
+            _state = state;
+            OnStateChanged(new EventArgs());
+        }
+
+        private void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            ChangeState(CircuitBreakerState.HalfOpen);
             _timer.Stop();
         }
     }
