@@ -6,22 +6,35 @@ using System.Threading.Tasks;
 
 namespace CircuitBreaker
 {
-    public class CircuitBreakerExtensions
+    public static class CircuitBreakerExtensions
     {
         public static T Retry<T>(this CircuitBreaker circuitBreaker, Func<T> operation, int attemptsUntilTermination)
         {
-            T result;
+            Exception exception = new Exception("CircuitBreaker Retry extension encountered an unknown error");
+            int terminationCount = 0;
 
             try
             {
-                result = circuitBreaker.Execute(operation);
+                while (terminationCount < attemptsUntilTermination)
+                {
+                    try
+                    {
+                        return circuitBreaker.Execute(operation);
+                    }
+                    catch (Exception ex)
+                    {
+                        exception = ex;
+                    }
+
+                    terminationCount++;
+                }
             }
             catch (Exception ex)
             {
-                throw new OperationFailedException(String.Format("The operation terminated after {0} retries.", attemptsUntilTermination), ex);
+               throw new OperationFailedException(String.Format("The operation terminated after {0} retries.", attemptsUntilTermination), ex);
             }
 
-            return result;
+            throw exception;
         }
     }
 }
