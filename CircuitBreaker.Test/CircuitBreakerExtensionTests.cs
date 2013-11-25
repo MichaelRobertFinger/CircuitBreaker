@@ -11,14 +11,23 @@ namespace CircuitBreaker.Test
     public class CircuitBreakerExtensionTests
     {
         [TestMethod]
-        [ExpectedException(typeof(OperationFailedException))]
         public void Retry_Failure()
         {
-            var func = new Func<int>(() => { throw new Exception(); });
-            var cb = new CircuitBreaker(500, 1);
-            cb.Retry<int>(func, 2);
+            AggregateException exceptions = new AggregateException();
 
+            try
+            {
+                var func = new Func<int>(() => { throw new Exception(); });
+                var cb = new CircuitBreaker(500, 1);
+                cb.Retry<int>(func, 2);
+            }
+            catch (AggregateException ex)
+            {
+                exceptions = ex;
+            }
 
+            Assert.AreEqual("The operation terminated after 2 retries.", exceptions.Message);
+            Assert.AreEqual(2, exceptions.InnerExceptions.Count);
         }
     }
 }

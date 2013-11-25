@@ -10,7 +10,7 @@ namespace CircuitBreaker
     {
         public static T Retry<T>(this CircuitBreaker circuitBreaker, Func<T> operation, int attemptsUntilTermination)
         {
-            Exception exception = new Exception("CircuitBreaker Retry extension encountered an unknown error");
+            List<Exception> _exceptions = new List<Exception>();
             int terminationCount = 0;
 
             try
@@ -23,7 +23,7 @@ namespace CircuitBreaker
                     }
                     catch (Exception ex)
                     {
-                        exception = ex;
+                        _exceptions.Add(ex);
                     }
 
                     terminationCount++;
@@ -31,10 +31,10 @@ namespace CircuitBreaker
             }
             catch (Exception ex)
             {
-               throw new OperationFailedException(String.Format("The operation terminated after {0} retries.", attemptsUntilTermination), ex);
+                throw new AggregateException("The operation terminated due to an unknown error.", ex);
             }
 
-            throw exception;
+            throw new AggregateException(String.Format("The operation terminated after {0} retries.", attemptsUntilTermination), _exceptions);
         }
     }
 }
