@@ -27,7 +27,27 @@ namespace CircuitBreaker.Test
             }
 
             Assert.AreEqual("The operation terminated after 2 retries.", exceptions.Message);
-            Assert.AreEqual(2, exceptions.InnerExceptions.Count);
+            Assert.AreEqual(2 , exceptions.InnerExceptions.Count);
+        }
+
+        [TestMethod]
+        public void Retry_WithZeroAttempts_Failure()
+        {
+            AggregateException exceptions = new AggregateException();
+
+            try
+            {
+                var func = new Func<int>(() => { throw new Exception(); });
+                var cb = new CircuitBreaker(500, 1);
+                cb.Retry<int>(func, 0);
+            }
+            catch (AggregateException ex)
+            {
+                exceptions = ex;
+            }
+
+            Assert.AreEqual("The operation terminated after 0 retries.", exceptions.Message);
+            Assert.AreEqual(0, exceptions.InnerExceptions.Count);
         }
     }
 }

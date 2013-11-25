@@ -3,12 +3,12 @@
   <Class Name="CircuitBreaker.CircuitBreaker">
     <Position X="3.5" Y="2" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAIBAAAAAAAAAAAAAAAAAIAAAAgBAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAVAAgBAQAAAAACAAAAAAAAAIAAAggBAAAACA=</HashCode>
       <FileName>CircuitBreaker.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Enum Name="CircuitBreaker.CircuitBreakerState">
-    <Position X="5.75" Y="2.5" Width="1.5" />
+    <Position X="5.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAgCAAAA=</HashCode>
       <FileName>CircuitBreakerState.cs</FileName>
