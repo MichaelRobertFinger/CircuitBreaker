@@ -1,4 +1,4 @@
 CircuitBreaker
 ==============
 
-Circuit breaker pattern in C#
+Circuit breaker pattern in C#.
